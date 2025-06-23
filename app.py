@@ -200,7 +200,8 @@ def main():
         
         if st.sidebar.button("Logout"):
             st.session_state['logged_in'] = False
-            st.experimental_rerun()
+            st.session_state['username'] = None
+            st.rerun()
         
         if page == "MNIST Classifier":
             mnist_classifier()
