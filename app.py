@@ -7,7 +7,7 @@ import cv2
 def load_model():
     """Load the trained MNIST model"""
     try:
-        model = tf.keras.models.load_model('mnist_model')
+        model = tf.keras.models.load_model('mnist_model.keras')
         return model
     except:
         st.error("Model not found. Please train the model first by running train_model.py")
