@@ -258,3 +258,81 @@ model = models.Sequential([
    - CI/CD pipeline
    - Docker containerization
    - Monitoring dashboard
+
+## Model Training Script (train_model.py)
+
+Our `train_model.py` implements a CNN for MNIST digit classification with the following key components:
+
+### Data Preprocessing
+
+- Loads MNIST dataset using TensorFlow
+- Normalizes pixel values to [0, 1] range
+- Reshapes images to (28, 28, 1) for CNN input
+- Splits data into training and test sets
+
+### CNN Architecture Details
+
+```python
+model = models.Sequential([
+    # First Convolutional Block
+    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),
+    layers.BatchNormalization(),
+    layers.MaxPooling2D((2, 2)),
+    
+    # Second Convolutional Block
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.BatchNormalization(),
+    layers.MaxPooling2D((2, 2)),
+    
+    # Third Convolutional Block
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.BatchNormalization(),
+    
+    # Flatten and Dense layers
+    layers.Flatten(),
+    layers.Dense(64, activation='relu'),
+    layers.Dropout(0.5),
+    layers.Dense(10, activation='softmax')
+])
+```
+
+### Key Features
+
+1. **Advanced Architecture**
+   - Three convolutional blocks
+   - Batch normalization for stability
+   - Dropout for regularization
+   - MaxPooling for dimension reduction
+
+2. **Training Configuration**
+   - Optimizer: Adam
+   - Loss: Sparse Categorical Crossentropy
+   - Batch size: 64
+   - Epochs: 10
+   - Validation split: 20%
+
+3. **Visualization**
+   - Training/validation accuracy plots
+   - Training/validation loss plots
+   - Saves plots as 'training_history.png'
+
+### Usage
+
+```bash
+python train_model.py
+```
+
+The script will perform the following steps:
+
+1. Load and preprocess the MNIST dataset
+2. Create and compile the model
+3. Train for 10 epochs
+4. Generate training visualizations
+5. Save the trained model as 'mnist_model.keras'
+
+### Performance Optimizations
+
+- BatchNormalization layers for faster training
+- Dropout layer (0.5) for regularization
+- Efficient data preprocessing pipeline
+- GPU support when available
