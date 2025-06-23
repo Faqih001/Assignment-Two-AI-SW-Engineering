@@ -467,3 +467,86 @@ User data is stored securely in `users.json` with the following structure:
     }
 }
 ```
+
+## Cloud Deployment
+
+### Streamlit Cloud Deployment
+
+1. **Prerequisites**
+   - GitHub account
+   - Streamlit account (sign up at https://share.streamlit.io)
+   - All code pushed to a public GitHub repository
+
+2. **Deployment Steps**
+
+   a. **Prepare Repository**
+   ```bash
+   git init
+   git add .
+   git commit -m "Initial commit"
+   git branch -M main
+   git remote add origin <your-github-repo-url>
+   git push -u origin main
+   ```
+
+   b. **Deploy on Streamlit Cloud**
+   - Go to https://share.streamlit.io
+   - Sign in with GitHub
+   - Select your repository
+   - Select `app.py` as the main file
+   - Click "Deploy"
+
+3. **Environment Setup**
+   - The `requirements.txt` file contains all necessary dependencies
+   - Using `tensorflow-cpu` to reduce cloud resource usage
+   - Configured for headless OpenCV
+
+4. **Security Considerations**
+   - User data is stored in `users.json` (in production, use a proper database)
+   - Configure Streamlit secrets for sensitive information
+   - HTTPS enabled by default on Streamlit Cloud
+
+5. **Monitoring**
+   - View application metrics in Streamlit Cloud dashboard
+   - Check deployment logs for issues
+   - Monitor resource usage
+
+### Post-Deployment Tasks
+
+1. **Testing**
+   - Verify all features work in cloud environment
+   - Test user registration and login
+   - Validate model predictions
+   - Check file upload/download functionality
+
+2. **Maintenance**
+   - Regularly update dependencies
+   - Monitor error logs
+   - Backup user data
+   - Update model weights as needed
+
+3. **Scaling**
+   - Monitor resource usage
+   - Optimize model loading
+   - Cache frequent operations
+   - Use efficient data storage
+
+### Production Considerations
+
+1. **Data Persistence**
+   For production deployment, consider:
+   - Using a proper database (e.g., PostgreSQL)
+   - Setting up cloud storage for models
+   - Implementing proper backup strategies
+
+2. **Security**
+   - Implement rate limiting
+   - Add request validation
+   - Set up monitoring alerts
+   - Regular security audits
+
+3. **Performance**
+   - Cache model predictions
+   - Optimize image processing
+   - Minimize memory usage
+   - Load models efficiently
