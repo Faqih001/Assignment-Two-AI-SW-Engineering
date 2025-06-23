@@ -419,3 +419,51 @@ The script will perform the following steps:
 - Dropout layer (0.5) for regularization
 - Efficient data preprocessing pipeline
 - GPU support when available
+
+## User Authentication System
+
+The application includes a secure user authentication system with the following features:
+
+### Authentication Features
+
+- User registration with email verification
+- Secure password storage using SHA-256 hashing
+- Session management
+- User-specific data persistence
+
+### User Management
+
+1. **Create Account**
+   - Click on the "Sign Up" tab
+   - Enter username, password, and email
+   - System validates and creates account
+
+2. **Login**
+   - Enter username and password
+   - Access all application features
+   - Session persists until logout
+
+3. **Security Features**
+   - Passwords are hashed before storage
+   - Session-based authentication
+   - CSRF protection via Streamlit
+   - Input validation and sanitization
+
+### Authentication Components
+
+- `users.py`: User management system
+- `login.py`: Login/signup interface
+- `app.py`: Main application with authentication integration
+
+### User Data Storage
+
+User data is stored securely in `users.json` with the following structure:
+
+```json
+{
+    "username": {
+        "password": "hashed_password",
+        "email": "user@example.com"
+    }
+}
+```

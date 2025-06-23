@@ -11,27 +11,14 @@ from sklearn.model_selection import train_test_split
 import plotly.express as px
 import hashlib
 
+# Import user management
+from login import show_login_page
+
 # Initialize session state
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
-
-# Demo credentials (in real app, use secure storage)
-USERS = {
-    'demo': hashlib.sha256('password123'.encode()).hexdigest()
-}
-
-def login():
-    st.title("Login")
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-    
-    if st.button("Login"):
-        if username in USERS and USERS[username] == hashlib.sha256(password.encode()).hexdigest():
-            st.session_state['logged_in'] = True
-            st.success("Logged in successfully!")
-            st.experimental_rerun()
-        else:
-            st.error("Invalid username or password")
+if 'username' not in st.session_state:
+    st.session_state['username'] = None
 
 def load_model():
     """Load the trained MNIST model"""
@@ -192,8 +179,9 @@ def bug_fix_demo():
 
 def main():
     if not st.session_state['logged_in']:
-        login()
+        show_login_page()
     else:
+        st.sidebar.title(f"Welcome, {st.session_state['username']}!")
         st.sidebar.title("Navigation")
         page = st.sidebar.radio("Go to", [
             "MNIST Classifier",
