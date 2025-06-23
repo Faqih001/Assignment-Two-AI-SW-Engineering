@@ -110,7 +110,7 @@ def main():
     
     # 7. Save model
     print("Saving model...")
-    model.save('mnist_model')
+    model.save('mnist_model.keras')
     print("Model saved successfully!")
 
 if __name__ == "__main__":
