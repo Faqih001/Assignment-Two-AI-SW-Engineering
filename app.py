@@ -1,82 +1,77 @@
 import streamlit as st
-import numpy as np
-import tensorflow as tf
-from PIL import Image
-import io
 from streamlit_drawable_canvas import st_canvas
-
-st.set_page_config(page_title="MNIST Digit Classifier", page_icon="✏️")
+import tensorflow as tf
+import numpy as np
+import cv2
 
 def load_model():
+    """Load the trained MNIST model"""
     try:
         model = tf.keras.models.load_model('mnist_model')
         return model
     except:
-        st.error("Model not found. Please make sure to train and save the model first.")
+        st.error("Model not found. Please train the model first by running train_model.py")
         return None
 
-def predict_digit(image, model):
-    # Preprocess the image
-    image = image.resize((28, 28))
-    image = image.convert('L')  # Convert to grayscale
-    image = np.array(image)
-    image = image.reshape(1, 28, 28, 1)
-    image = image / 255.0
+def preprocess_image(image):
+    """Preprocess the drawn image for prediction"""
+    # Convert to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
-    # Make prediction
-    prediction = model.predict(image)
-    return np.argmax(prediction[0]), prediction[0]
+    # Resize to 28x28
+    resized = cv2.resize(gray, (28, 28), interpolation=cv2.INTER_AREA)
+    
+    # Normalize pixel values
+    normalized = resized.astype('float32') / 255.0
+    
+    # Reshape for model input
+    reshaped = normalized.reshape(1, 28, 28, 1)
+    
+    return reshaped
 
 def main():
-    st.title("✏️ MNIST Digit Classifier")
-    st.markdown("""
-    ### Draw a digit (0-9) in the canvas below
-    Try to center your digit and make it large enough to fill most of the canvas.
-    """)
+    st.title("MNIST Digit Classifier")
+    st.write("Draw a digit (0-9) below and the model will predict what digit it is!")
     
-    model = load_model()
-    
-    if model is None:
-        return
-        
-    # Create a canvas component
+    # Create a canvas for drawing
     canvas_result = st_canvas(
         stroke_width=20,
-        stroke_color='white',
-        background_color='black',
+        stroke_color='#FFFFFF',
+        background_color='#000000',
         height=280,
         width=280,
         drawing_mode="freedraw",
         key="canvas"
     )
     
-    col1, col2 = st.columns([2, 1])
+    # Load the model
+    model = load_model()
     
-    with col1:
-        if canvas_result.image_data is not None:
-            # Convert the drawn image to PIL Image
-            image = Image.fromarray(canvas_result.image_data.astype('uint8'))
-            if st.button('Predict', type='primary'):
-                digit, probabilities = predict_digit(image, model)
-                
-                st.markdown(f"### Predicted Digit: {digit}")
-                
-                # Display probabilities as a bar chart
-                st.markdown("#### Prediction Probabilities")
-                prob_df = pd.DataFrame({
-                    'Digit': range(10),
-                    'Probability': probabilities
-                })
-                st.bar_chart(prob_df.set_index('Digit'))
-    
-    with col2:
-        st.markdown("### Instructions")
-        st.markdown("""
-        1. Draw a single digit
-        2. Click 'Predict'
-        3. See results
-        4. Clear canvas to try again
-        """)
+    if canvas_result.image_data is not None and model is not None:
+        # Get the drawn image
+        image = canvas_result.image_data
+        
+        # Only predict if something is drawn
+        if image.sum() > 0:
+            # Preprocess the image
+            processed_image = preprocess_image(image)
+            
+            # Make prediction
+            prediction = model.predict(processed_image)
+            predicted_digit = np.argmax(prediction[0])
+            confidence = prediction[0][predicted_digit] * 100
+            
+            # Display results
+            col1, col2 = st.columns(2)
+            with col1:
+                st.subheader("Prediction")
+                st.title(f"{predicted_digit}")
+            with col2:
+                st.subheader("Confidence")
+                st.title(f"{confidence:.2f}%")
+            
+            # Display bar chart of probabilities
+            st.bar_chart(prediction[0])
 
 if __name__ == "__main__":
     main()
