@@ -10,10 +10,18 @@ class UserManager:
 
     def _load_users(self) -> Dict:
         """Load users from JSON file"""
-        if os.path.exists(self.users_file):
-            with open(self.users_file, 'r') as f:
-                return json.load(f)
-        return {}
+        try:
+            if os.path.exists(self.users_file):
+                with open(self.users_file, 'r') as f:
+                    return json.load(f)
+            else:
+                # Create empty users file
+                with open(self.users_file, 'w') as f:
+                    json.dump({}, f)
+                return {}
+        except Exception as e:
+            print(f"Error loading users: {e}")
+            return {}
 
     def _save_users(self) -> None:
         """Save users to JSON file"""

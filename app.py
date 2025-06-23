@@ -1,3 +1,11 @@
+import os
+import logging
+
+# Configure logging to suppress TensorFlow warnings
+logging.getLogger('tensorflow').setLevel(logging.ERROR)
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
+# Rest of the imports
 import streamlit as st
 import tensorflow as tf
 import numpy as np
