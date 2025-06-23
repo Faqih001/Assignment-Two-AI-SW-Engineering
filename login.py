@@ -46,6 +46,6 @@ def show_login_page():
                 if user_manager.create_user(new_username, new_password, email):
                     st.success("Account created successfully! Please log in.")
                     # Use form_submit_button to handle form reset
-                    st.experimental_rerun()
+                    st.rerun()
                 else:
                     st.error("Username already exists")
