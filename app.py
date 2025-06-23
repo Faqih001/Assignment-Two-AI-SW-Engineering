@@ -170,20 +170,120 @@ def nlp_analysis():
 def bug_fix_demo():
     st.title("Bug Fix Demonstration")
     
-    st.subheader("Original Buggy Code")
+    # File upload for code with bugs
+    st.subheader("Upload Code to Fix")
+    uploaded_file = st.file_uploader("Choose a Python file", type="py")
+    
+    if uploaded_file is not None:
+        # Read and display the uploaded code
+        content = uploaded_file.getvalue().decode()
+        st.subheader("Original Code")
+        st.code(content, language='python')
+        
+        # Analyze and fix the code
+        fixes = analyze_code(content)
+        
+        # Display fixes
+        st.subheader("Suggested Fixes")
+        for i, (issue, fix) in enumerate(fixes.items(), 1):
+            st.markdown(f"**Issue {i}**: {issue}")
+            st.markdown(f"**Fix**: {fix}")
+        
+        # Show example of fixed code
+        st.subheader("Example of Fixed Code")
+        fixed_code = apply_fixes(content)
+        st.code(fixed_code, language='python')
+        
+        # Option to download fixed code
+        st.download_button(
+            label="Download Fixed Code",
+            data=fixed_code,
+            file_name="fixed_" + uploaded_file.name,
+            mime="text/plain"
+        )
+    
+    # Show example buggy code
+    st.subheader("Example Buggy Code")
     with open('buggy_model.py', 'r') as file:
-        st.code(file.read(), language='python')
+        buggy_code = file.read()
+        st.code(buggy_code, language='python')
     
-    st.subheader("Fixed Code")
+    # Show example fixed code
+    st.subheader("Example Fixed Code")
     with open('fixed_model.py', 'r') as file:
-        st.code(file.read(), language='python')
+        fixed_code = file.read()
+        st.code(fixed_code, language='python')
     
+    # Common TensorFlow/Keras bugs and fixes
+    st.subheader("Common TensorFlow/Keras Bugs and Fixes")
     st.markdown("""
-    ### Bug Fixes Explained
-    1. **Input Shape**: Added missing input_shape parameter in the first Dense layer
-    2. **Loss Function**: Changed from binary_crossentropy to sparse_categorical_crossentropy
-    3. **Model Evaluation**: Added validation split for proper evaluation
+    1. **Missing Input Shape**
+       - Bug: First layer doesn't specify input shape
+       - Fix: Add input_shape parameter to first layer
+       
+    2. **Wrong Loss Function**
+       - Bug: Using binary_crossentropy for multi-class problems
+       - Fix: Use sparse_categorical_crossentropy or categorical_crossentropy
+       
+    3. **Data Preprocessing**
+       - Bug: Missing data normalization
+       - Fix: Normalize data (e.g., divide by 255 for images)
+       
+    4. **Model Validation**
+       - Bug: No validation split during training
+       - Fix: Add validation_split or validation_data
+       
+    5. **Data Shape Issues**
+       - Bug: Incorrect input dimensions
+       - Fix: Reshape data to match expected input shape
     """)
+
+def analyze_code(content):
+    """Analyze code for common bugs"""
+    fixes = {}
+    
+    # Check for common issues
+    if 'input_shape' not in content and 'Dense' in content:
+        fixes["Missing Input Shape"] = "Add input_shape parameter to the first layer"
+    
+    if 'binary_crossentropy' in content and 'Dense' in content and 'softmax' in content:
+        fixes["Wrong Loss Function"] = "Use sparse_categorical_crossentropy for multi-class problems"
+    
+    if '/255' not in content and ('mnist' in content or 'image' in content.lower()):
+        fixes["Missing Normalization"] = "Normalize pixel values by dividing by 255"
+    
+    if 'validation_split' not in content and 'fit' in content:
+        fixes["No Validation"] = "Add validation_split parameter to model.fit()"
+    
+    if 'reshape' not in content and ('mnist' in content or 'Dense' in content):
+        fixes["Data Shape Issues"] = "Reshape input data to match the expected shape"
+    
+    return fixes
+
+def apply_fixes(content):
+    """Apply fixes to the code"""
+    fixed_code = content
+    
+    # Example fixes (you can expand these based on common patterns)
+    if 'input_shape' not in content and 'Dense' in content:
+        fixed_code = fixed_code.replace(
+            'Dense(128',
+            'Dense(128, input_shape=(784,)'
+        )
+    
+    if 'binary_crossentropy' in content:
+        fixed_code = fixed_code.replace(
+            'binary_crossentropy',
+            'sparse_categorical_crossentropy'
+        )
+    
+    if 'validation_split' not in content and 'fit' in content:
+        fixed_code = fixed_code.replace(
+            'model.fit(',
+            'model.fit(validation_split=0.2,'
+        )
+    
+    return fixed_code
 
 def main():
     if not st.session_state['logged_in']:
