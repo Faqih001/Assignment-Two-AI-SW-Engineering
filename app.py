@@ -286,30 +286,40 @@ def apply_fixes(content):
     return fixed_code
 
 def main():
-    if not st.session_state['logged_in']:
-        show_login_page()
+    # Initialize session state for navigation
+    if 'current_page' not in st.session_state:
+        st.session_state['current_page'] = "MNIST Classifier"
+
+    if not st.session_state.get('logged_in', False):
+        # Show login page and get login status
+        is_logged_in = show_login_page()
+        if is_logged_in:
+            st.session_state['current_page'] = "MNIST Classifier"
     else:
         st.sidebar.title(f"Welcome, {st.session_state['username']}!")
         st.sidebar.title("Navigation")
-        page = st.sidebar.radio("Go to", [
-            "MNIST Classifier",
-            "Iris Classifier",
-            "NLP Analysis",
-            "Bug Fix Demo"
-        ])
         
+        # Navigation
+        st.session_state['current_page'] = st.sidebar.radio(
+            "Go to",
+            ["MNIST Classifier", "Iris Classifier", "NLP Analysis", "Bug Fix Demo"],
+            index=["MNIST Classifier", "Iris Classifier", "NLP Analysis", "Bug Fix Demo"].index(st.session_state['current_page'])
+        )
+        
+        # Logout button
         if st.sidebar.button("Logout"):
             st.session_state['logged_in'] = False
             st.session_state['username'] = None
-            st.rerun()
+            st.session_state['current_page'] = "MNIST Classifier"
         
-        if page == "MNIST Classifier":
+        # Page routing
+        if st.session_state['current_page'] == "MNIST Classifier":
             mnist_classifier()
-        elif page == "Iris Classifier":
+        elif st.session_state['current_page'] == "Iris Classifier":
             iris_classifier()
-        elif page == "NLP Analysis":
+        elif st.session_state['current_page'] == "NLP Analysis":
             nlp_analysis()
-        elif page == "Bug Fix Demo":
+        elif st.session_state['current_page'] == "Bug Fix Demo":
             bug_fix_demo()
 
 if __name__ == "__main__":

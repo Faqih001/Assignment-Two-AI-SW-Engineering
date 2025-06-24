@@ -23,7 +23,7 @@ def show_login_page():
                     st.session_state['logged_in'] = True
                     st.session_state['username'] = login_username
                     st.success("Successfully logged in!")
-                    st.rerun()
+                    # Let the main app handle the navigation
                 else:
                     st.error("Invalid username or password")
     
@@ -42,10 +42,12 @@ def show_login_page():
                     st.error("Please fill in all fields")
                 elif new_password != confirm_password:
                     st.error("Passwords do not match")
-            else:
-                if user_manager.create_user(new_username, new_password, email):
+                elif user_manager.create_user(new_username, new_password, email):
                     st.success("Account created successfully! Please log in.")
-                    # Use form_submit_button to handle form reset
-                    st.rerun()
                 else:
                     st.error("Username already exists")
+
+    # Add a session state check for login status
+    if st.session_state.get('logged_in', False):
+        return True
+    return False
