@@ -23,7 +23,7 @@ def show_login_page():
                     st.session_state['logged_in'] = True
                     st.session_state['username'] = login_username
                     st.success("Successfully logged in!")
-                    st.rerun()
+                    st.experimental_rerun()
                 else:
                     st.error("Invalid username or password")
     
@@ -46,6 +46,6 @@ def show_login_page():
                 if user_manager.create_user(new_username, new_password, email):
                     st.success("Account created successfully! Please log in.")
                     # Use form_submit_button to handle form reset
-                    st.rerun()
+                    st.experimental_rerun()
                 else:
                     st.error("Username already exists")
