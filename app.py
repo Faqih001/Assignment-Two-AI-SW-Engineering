@@ -286,31 +286,48 @@ def apply_fixes(content):
     return fixed_code
 
 def main():
-    # Initialize session state for navigation
+    # Initialize session states
     if 'current_page' not in st.session_state:
         st.session_state['current_page'] = "MNIST Classifier"
+    if 'logged_in' not in st.session_state:
+        st.session_state['logged_in'] = False
+    if 'username' not in st.session_state:
+        st.session_state['username'] = None
 
-    if not st.session_state.get('logged_in', False):
-        # Show login page and get login status
-        is_logged_in = show_login_page()
-        if is_logged_in:
+    if not st.session_state['logged_in']:
+        # Show login page
+        show_login_page()
+        
+        # Check if login was successful
+        if st.session_state.get('logged_in', False):
             st.session_state['current_page'] = "MNIST Classifier"
+            st.experimental_set_query_params(page="MNIST Classifier")
     else:
         st.sidebar.title(f"Welcome, {st.session_state['username']}!")
         st.sidebar.title("Navigation")
         
         # Navigation
-        st.session_state['current_page'] = st.sidebar.radio(
+        pages = ["MNIST Classifier", "Iris Classifier", "NLP Analysis", "Bug Fix Demo"]
+        current_page_idx = pages.index(st.session_state['current_page'])
+        
+        selected_page = st.sidebar.radio(
             "Go to",
-            ["MNIST Classifier", "Iris Classifier", "NLP Analysis", "Bug Fix Demo"],
-            index=["MNIST Classifier", "Iris Classifier", "NLP Analysis", "Bug Fix Demo"].index(st.session_state['current_page'])
+            pages,
+            index=current_page_idx
         )
+        
+        # Update page if changed
+        if selected_page != st.session_state['current_page']:
+            st.session_state['current_page'] = selected_page
+            st.experimental_set_query_params(page=selected_page)
         
         # Logout button
         if st.sidebar.button("Logout"):
-            st.session_state['logged_in'] = False
-            st.session_state['username'] = None
-            st.session_state['current_page'] = "MNIST Classifier"
+            for key in ['logged_in', 'username', 'current_page']:
+                if key in st.session_state:
+                    del st.session_state[key]
+            st.experimental_set_query_params()
+            return
         
         # Page routing
         if st.session_state['current_page'] == "MNIST Classifier":

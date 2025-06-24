@@ -23,9 +23,10 @@ def show_login_page():
                     st.session_state['logged_in'] = True
                     st.session_state['username'] = login_username
                     st.success("Successfully logged in!")
-                    # Let the main app handle the navigation
+                    return True
                 else:
                     st.error("Invalid username or password")
+                    return False
     
     # Sign Up Tab
     with tab2:
@@ -46,8 +47,5 @@ def show_login_page():
                     st.success("Account created successfully! Please log in.")
                 else:
                     st.error("Username already exists")
-
-    # Add a session state check for login status
-    if st.session_state.get('logged_in', False):
-        return True
+    
     return False
