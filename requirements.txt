@@ -2,7 +2,7 @@ tensorflow==2.13.0
 scikit-learn==1.3.0
 spacy==3.6.0
 pandas==2.0.3
-numpy==1.24.3
+numpy==1.24.3  # Must be < 2.0 for TensorFlow compatibility
 matplotlib==3.7.1
 seaborn==0.12.2
 streamlit==1.24.0
