@@ -282,45 +282,38 @@ def apply_fixes(content):
     
     return fixed_code
 
-def main():
-    # Make sure session state is initialized
-    init_session_state()
+# Create navigation sidebar
+def show_navigation():
+    with st.sidebar:
+        st.title("Navigation")
+        pages = ["MNIST Classifier", "Iris Classifier", "NLP Analysis"]
+        selected_page = st.radio("Select a tool:", pages)
+        
+        if st.button("Logout"):
+            st.session_state['logged_in'] = False
+            st.session_state['username'] = None
+            st.rerun()
+            
+        return selected_page
 
-    # Handle authentication
+def main():
+    # Show login page if not logged in
     if not st.session_state.get('logged_in', False):
         show_login_page()
     else:
-        # Show navigation and content
-        st.sidebar.title(f"Welcome, {st.session_state['username']}!")
-        st.sidebar.title("Navigation")
+        # Show navigation and handle page selection
+        selected_page = show_navigation()
         
-        # Navigation
-        pages = ["MNIST Classifier", "Iris Classifier", "NLP Analysis", "Bug Fix Demo"]
-        selected_page = st.sidebar.selectbox(
-            "Go to",
-            pages,
-            index=pages.index(st.session_state.get('current_page', "MNIST Classifier"))
-        )
+        # Display welcome message
+        st.sidebar.write(f"Welcome, {st.session_state['username']}!")
         
-        # Update current page
-        st.session_state['current_page'] = selected_page
-        
-        # Logout button
-        if st.sidebar.button("Logout"):
-            st.session_state['logged_in'] = False
-            st.session_state['username'] = None
-            st.session_state['current_page'] = "MNIST Classifier"
-            st.rerun()
-        
-        # Display selected page content
+        # Show selected page content
         if selected_page == "MNIST Classifier":
             mnist_classifier()
         elif selected_page == "Iris Classifier":
             iris_classifier()
         elif selected_page == "NLP Analysis":
             nlp_analysis()
-        elif selected_page == "Bug Fix Demo":
-            bug_fix_demo()
 
 if __name__ == "__main__":
     main()

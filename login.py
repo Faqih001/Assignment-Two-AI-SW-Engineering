@@ -9,6 +9,8 @@ def init_session_state():
         st.session_state['username'] = None
     if 'current_page' not in st.session_state:
         st.session_state['current_page'] = "MNIST Classifier"
+    if 'should_redirect' not in st.session_state:
+        st.session_state['should_redirect'] = False
 
 def show_login_page():
     """Display the login page and handle authentication"""
@@ -34,6 +36,8 @@ def show_login_page():
                     st.session_state['logged_in'] = True
                     st.session_state['username'] = login_username
                     st.success("Successfully logged in!")
+                    st.session_state['should_redirect'] = True
+                    st.rerun()
                     return True
                 else:
                     st.error("Invalid username or password")
@@ -57,5 +61,9 @@ def show_login_page():
                     st.success("Account created successfully! Please log in.")
                 else:
                     st.error("Username already exists")
+    
+    if st.session_state.get('should_redirect', False):
+        st.session_state['should_redirect'] = False
+        st.rerun()
     
     return False
