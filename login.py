@@ -1,7 +1,18 @@
 import streamlit as st
 from users import UserManager
 
+def init_session_state():
+    """Initialize session state variables"""
+    if 'logged_in' not in st.session_state:
+        st.session_state['logged_in'] = False
+    if 'username' not in st.session_state:
+        st.session_state['username'] = None
+    if 'current_page' not in st.session_state:
+        st.session_state['current_page'] = "MNIST Classifier"
+
 def show_login_page():
+    """Display the login page and handle authentication"""
+    init_session_state()
     st.title("AI Tools Demo - Login")
     
     # Initialize user manager
@@ -13,12 +24,12 @@ def show_login_page():
     # Login Tab
     with tab1:
         st.header("Login")
-        with st.form("login_form"):
+        with st.form("login_form", clear_on_submit=True):
             login_username = st.text_input("Username")
             login_password = st.text_input("Password", type="password")
             submit_login = st.form_submit_button("Login")
             
-            if submit_login:
+            if submit_login and login_username and login_password:
                 if user_manager.verify_user(login_username, login_password):
                     st.session_state['logged_in'] = True
                     st.session_state['username'] = login_username
@@ -26,12 +37,11 @@ def show_login_page():
                     return True
                 else:
                     st.error("Invalid username or password")
-                    return False
     
     # Sign Up Tab
     with tab2:
         st.header("Create Account")
-        with st.form("signup_form"):
+        with st.form("signup_form", clear_on_submit=True):
             new_username = st.text_input("Username")
             new_password = st.text_input("Password", type="password")
             confirm_password = st.text_input("Confirm Password", type="password")

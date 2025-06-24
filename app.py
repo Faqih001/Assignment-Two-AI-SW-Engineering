@@ -20,21 +20,18 @@ import plotly.express as px
 import hashlib
 
 # Import user management
-from login import show_login_page
+from login import show_login_page, init_session_state
 
 # Initialize session state
-if 'logged_in' not in st.session_state:
-    st.session_state['logged_in'] = False
-if 'username' not in st.session_state:
-    st.session_state['username'] = None
+init_session_state()
 
 def load_model():
     """Load the trained MNIST model"""
     try:
         model = tf.keras.models.load_model('mnist_model.keras')
         return model
-    except:
-        st.error("Model not found. Please train the model first by running train_model.py")
+    except Exception as e:
+        st.error(f"Error loading model: {str(e)}")
         return None
 
 def preprocess_image(image):
@@ -286,57 +283,43 @@ def apply_fixes(content):
     return fixed_code
 
 def main():
-    # Initialize session states
-    if 'current_page' not in st.session_state:
-        st.session_state['current_page'] = "MNIST Classifier"
-    if 'logged_in' not in st.session_state:
-        st.session_state['logged_in'] = False
-    if 'username' not in st.session_state:
-        st.session_state['username'] = None
+    # Make sure session state is initialized
+    init_session_state()
 
-    if not st.session_state['logged_in']:
-        # Show login page
+    # Handle authentication
+    if not st.session_state.get('logged_in', False):
         show_login_page()
-        
-        # Check if login was successful
-        if st.session_state.get('logged_in', False):
-            st.session_state['current_page'] = "MNIST Classifier"
-            st.experimental_set_query_params(page="MNIST Classifier")
     else:
+        # Show navigation and content
         st.sidebar.title(f"Welcome, {st.session_state['username']}!")
         st.sidebar.title("Navigation")
         
         # Navigation
         pages = ["MNIST Classifier", "Iris Classifier", "NLP Analysis", "Bug Fix Demo"]
-        current_page_idx = pages.index(st.session_state['current_page'])
-        
-        selected_page = st.sidebar.radio(
+        selected_page = st.sidebar.selectbox(
             "Go to",
             pages,
-            index=current_page_idx
+            index=pages.index(st.session_state.get('current_page', "MNIST Classifier"))
         )
         
-        # Update page if changed
-        if selected_page != st.session_state['current_page']:
-            st.session_state['current_page'] = selected_page
-            st.experimental_set_query_params(page=selected_page)
+        # Update current page
+        st.session_state['current_page'] = selected_page
         
         # Logout button
         if st.sidebar.button("Logout"):
-            for key in ['logged_in', 'username', 'current_page']:
-                if key in st.session_state:
-                    del st.session_state[key]
-            st.experimental_set_query_params()
-            return
+            st.session_state['logged_in'] = False
+            st.session_state['username'] = None
+            st.session_state['current_page'] = "MNIST Classifier"
+            st.rerun()
         
-        # Page routing
-        if st.session_state['current_page'] == "MNIST Classifier":
+        # Display selected page content
+        if selected_page == "MNIST Classifier":
             mnist_classifier()
-        elif st.session_state['current_page'] == "Iris Classifier":
+        elif selected_page == "Iris Classifier":
             iris_classifier()
-        elif st.session_state['current_page'] == "NLP Analysis":
+        elif selected_page == "NLP Analysis":
             nlp_analysis()
-        elif st.session_state['current_page'] == "Bug Fix Demo":
+        elif selected_page == "Bug Fix Demo":
             bug_fix_demo()
 
 if __name__ == "__main__":
