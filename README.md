@@ -2,11 +2,119 @@
 
 This repository contains the implementation of various AI tasks using different frameworks and tools. The assignment is divided into three main parts, focusing on theoretical understanding, practical implementation, and ethical considerations in AI development.
 
+## 🚀 Live Demo
+
+The application is deployed at [Streamlit Cloud](https://ai-tools-website.streamlit.app/)
+
+## 🎯 Features
+
+1. **User Authentication System**
+   - Secure login and registration
+   - Session management
+   - User data persistence
+
+2. **MNIST Digit Recognition**
+   - Interactive drawing canvas
+   - Real-time digit prediction
+   - Deep learning model implementation using TensorFlow
+   - Model training visualization
+
+3. **NLP Analysis with spaCy**
+   - Text analysis and processing
+   - Named Entity Recognition (NER)
+   - Part-of-speech tagging
+   - Sentiment analysis
+   - Dependency parsing
+
+4. **Bug Detection and Fixing**
+   - Interactive demonstration of model debugging
+   - Error analysis and resolution
+   - Model performance comparison
+
+5. **Iris Classification**
+   - Machine learning model implementation
+   - Interactive prediction interface
+   - Data visualization
+
+## 🛠️ Technical Implementation
+
+### Dependencies
+
+```python
+tensorflow==2.13.0
+scikit-learn==1.3.0
+spacy==3.6.0
+pandas==2.0.3
+numpy==1.24.3
+streamlit==1.24.0
+streamlit-drawable-canvas==0.9.2
+```
+
+### Project Structure
+
+```plaintext
+├── app.py              # Main Streamlit application
+├── login.py            # User authentication system
+├── train_model.py      # MNIST model training script
+├── buggy_model.py      # Example of model with bugs
+├── fixed_model.py      # Corrected model implementation
+├── iris_classifier.py  # Iris classification model
+├── nlp_analysis.py     # NLP processing functions
+└── requirements.txt    # Project dependencies
+```
+
+## 🚀 Deployment Instructions
+
+### Local Development
+
+1. Clone the repository:
+
+   ```bash
+   git clone <repository-url>
+   cd <repository-name>
+   ```
+
+2. Create and activate a virtual environment:
+
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\\Scripts\\activate
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Run the Streamlit app:
+
+   ```bash
+   streamlit run app.py
+   ```
+
+### Streamlit Cloud Deployment
+
+1. Push your code to GitHub
+2. Visit [Streamlit Share](https://share.streamlit.io/)
+3. Sign in with GitHub
+4. Select your repository and branch
+5. Set the main file path as `app.py`
+6. Click "Deploy!"
+
+### Important Deployment Notes
+
+- The spaCy model is included in requirements.txt and will be automatically installed
+- MNIST model will be trained on first run if not found
+- Configure your environment variables in Streamlit Cloud for any sensitive data
+- The app uses TensorFlow CPU version for cloud compatibility
+
 ## Part 1: Theoretical Understanding
 
-### Q1: TensorFlow vs PyTorch Comparison
+### TensorFlow vs PyTorch Comparison
 
 **Key Differences:**
+
 - **TensorFlow:**
   - Static computational graphs (Graph mode)
   - Better production deployment tools (TF Serving, TFLite)
@@ -20,6 +128,7 @@ This repository contains the implementation of various AI tasks using different 
   - Great for research
 
 **When to Choose:**
+
 - Use TensorFlow for:
   - Production deployment
   - Mobile applications
